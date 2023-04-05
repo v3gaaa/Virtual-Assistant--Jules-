@@ -6,6 +6,9 @@ import ssl
 import smtplib
 import pywhatkit
 import eel
+import wikipedia
+import unidecode
+import pygame
 
 
 eel.init("web")
@@ -15,6 +18,14 @@ programas = {
     "zoom": r"C:\Users\Usuario\AppData\Roaming\Zoom\bin\Zoom.exe",
     "Epic": r"C:\Program Files (x86)\Epic Games\Launcher\Portal\Binaries\Win32\EpicGamesLauncher.exe"
 }
+
+
+r = sr.Recognizer()
+
+engine = pyttsx3.init()
+voices = engine.getProperty("voices")
+engine.setProperty("voice", voices[0].id)
+
 
 def enviar_correo(destinatario, asunto, mensaje):
     try:
@@ -58,7 +69,7 @@ def musica(comando):
     com = comando
     if "reproduce" in com:
         music = com.replace("reproduce", "")
-    if "pon" in com:
+    elif "pon" in com:
         music = com.replace("pon", "")
     print("Reproduciendo" + music)
     engine.say("Reproduciendo" + music)
@@ -66,12 +77,20 @@ def musica(comando):
     pywhatkit.playonyt(music)
 
     
-r = sr.Recognizer()
+def wiki(comando):
+    search = comando
+    if "busca" in search:
+        search = search.replace("busca", "")
+    elif "que es el" in search:
+        search = search.replace("que es el", "")
+    elif "que es la" in search:
+        search = search.replace("que es la", "")
 
-engine = pyttsx3.init()
-voices = engine.getProperty("voices")
-engine.setProperty("voice", voices[0].id)
-
+    wikipedia.set_lang("es")
+    wiki = wikipedia.summary(search, 1)
+    print(search + ": "+ wiki)
+    engine.say(wiki)
+    engine.runAndWait()
 
 def asistente():
     with sr.Microphone() as source:
@@ -82,10 +101,13 @@ def asistente():
 
         try:
             comando = r.recognize_google(audio, language="es-ES")
+            if "Jules" in comando:
+                comando = comando.replace("Jules", "")
             print(f"Comando: {comando}")
             engine.say(f"Entendido. {comando}")
             engine.runAndWait()
             comando = comando.lower()
+            comando = unidecode.unidecode(comando)
             
             if "correo" in comando:
                 destinatario = input("Indica el correo del destinatario: ")
@@ -93,8 +115,29 @@ def asistente():
                 mensaje = input("Indica el mensaje del correo: ")
                 enviar_correo(destinatario, asunto, mensaje)
 
+
+
+            elif "busca" in comando:
+                wiki(comando)
+
+            elif "que es el" in comando:
+                wiki(comando)
+            
+            elif "que es la" in comando:
+                wiki(comando)
+
+
+
             elif "abrir" in comando:
                 abrir_aplicacion(comando)
+            
+            elif "abre" in comando:
+                abrir_aplicacion(comando)
+
+            elif "inicia" in comando:
+                abrir_aplicacion(comando)
+
+
 
             elif "reproduce" in comando:
                 musica(comando)
@@ -102,7 +145,9 @@ def asistente():
             elif "pon" in comando:
                 musica(comando)
 
-            elif "adiós" in comando:
+
+
+            elif "adios" in comando:
                 exit()
 
             else:
@@ -116,7 +161,7 @@ def asistente():
 
 @eel.expose
 def main():
-    engine.say("Hola soy Julieta tu asistente virtual")
+    engine.say("Hola soy Jules tu asistente virtual")
     engine.runAndWait()
     asistente()
 
