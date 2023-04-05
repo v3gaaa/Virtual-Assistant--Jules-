@@ -8,16 +8,11 @@ import pywhatkit
 import eel
 import wikipedia
 import unidecode
-import pygame
-
+import subprocess as sub
+import csv
+import config
 
 eel.init("web")
-
-programas = {
-    "discord": r"C:\Users\Usuario\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Discord Inc\Discord.lnk",
-    "zoom": r"C:\Users\Usuario\AppData\Roaming\Zoom\bin\Zoom.exe",
-    "Epic": r"C:\Program Files (x86)\Epic Games\Launcher\Portal\Binaries\Win32\EpicGamesLauncher.exe"
-}
 
 
 r = sr.Recognizer()
@@ -25,7 +20,6 @@ r = sr.Recognizer()
 engine = pyttsx3.init()
 voices = engine.getProperty("voices")
 engine.setProperty("voice", voices[0].id)
-
 
 def enviar_correo(destinatario, asunto, mensaje):
     try:
@@ -53,6 +47,12 @@ def enviar_correo(destinatario, asunto, mensaje):
         engine.runAndWait()
 
 def abrir_aplicacion(comando):
+
+    with open('programas.csv', mode='r') as infile:
+        reader = csv.reader(infile)
+        programas = {rows[0]:rows[1] for rows in reader}
+
+
     try:
         for app in programas:
             if app in comando:
@@ -79,18 +79,34 @@ def musica(comando):
     
 def wiki(comando):
     search = comando
-    if "busca" in search:
+    if  "busca que es el" in search:
+        search = search.replace("busca que es el", "")
+    if  "busca que es la" in search:
+        search = search.replace("busca que es la", "")
+    elif "busca" in search:
         search = search.replace("busca", "")
     elif "que es el" in search:
         search = search.replace("que es el", "")
     elif "que es la" in search:
         search = search.replace("que es la", "")
+    elif  "que es" in search:
+        search = search.replace("que es", "")
 
     wikipedia.set_lang("es")
     wiki = wikipedia.summary(search, 1)
     print(search + ": "+ wiki)
     engine.say(wiki)
     engine.runAndWait()
+
+
+def write(f,com):
+    com = com.replace("escribe", "")
+    com = com.strip()
+    f.write(com + os.linesep)
+    f.close()
+    engine.say("Listo, puedes revisar tu archivo")
+    engine.runAndWait()
+    sub.Popen("nota.txt", shell=True)
 
 def asistente():
     with sr.Microphone() as source:
@@ -100,7 +116,7 @@ def asistente():
         audio = r.listen(source)
 
         try:
-            comando = r.recognize_google(audio, language="es-ES")
+            comando = r.recognize_google(audio, language="es-MX")
             if "Jules" in comando:
                 comando = comando.replace("Jules", "")
             print(f"Comando: {comando}")
@@ -116,18 +132,15 @@ def asistente():
                 enviar_correo(destinatario, asunto, mensaje)
 
 
-
+            #PALABRAS QUE MANDAN A LLAMAR LA BUSQUEDA EN WIKIPEDIA
             elif "busca" in comando:
                 wiki(comando)
 
-            elif "que es el" in comando:
-                wiki(comando)
-            
-            elif "que es la" in comando:
+            elif "que es" in comando:
                 wiki(comando)
 
 
-
+            #PALABRAS QUE ABREN APLICIONES
             elif "abrir" in comando:
                 abrir_aplicacion(comando)
             
@@ -138,7 +151,7 @@ def asistente():
                 abrir_aplicacion(comando)
 
 
-
+            #PALABRAS QUE REPRODUCEN MUSICA
             elif "reproduce" in comando:
                 musica(comando)
 
@@ -146,9 +159,19 @@ def asistente():
                 musica(comando)
 
 
+            elif "escribe" in comando:
+                try:
+                    with open("nota.txt", "a") as f:
+                        write(f,comando)
 
+                except FileNotFoundError as e:
+                    file = open("nota.txt", "w")
+                    write(file,comando)
+
+
+            #SOLAMENTE PASA EL COMANDO
             elif "adios" in comando:
-                exit()
+                print("")
 
             else:
                 engine.say("Comando no reconocido")

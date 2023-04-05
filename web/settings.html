@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Jules VA</title>
+    <link rel="shortcut icon" type="image/icon" href="Images/favicon.ico"/>
+    <link rel="stylesheet" href="settings.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cormorant">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Gruppo">
+    <script type="text/javascript" src="/eel.js"></script>
+    <script type="text/javascript" src="/index.js"></script>
+
+  </head>
+  <body>
+    <script src="index.js"></script>
+    <div>
+        <button type="button" id="back"> <img src="Images/leftarow.png" onclick="location.href='index.html'"/></button>
+    </div>
+    
+    <div id="miPopUp" class="popup">
+        <h3>Aplicación agregada</h3>
+        <p>Tu aplicación ha sido agregada exitosamente.</p>
+        <button onclick="cerrarPopUp()">Cerrar</button>
+    </div>
+
+
+    <div id="mode" padding="10%">
+        <table margin="20px">
+            <tr>
+                <td>
+                    <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                </td>
+                <td>
+                    <h2 class="txt">mode</h2>
+                </td>
+            </tr>
+
+        </table>
+    </div>
+
+    <div id="apps">
+        <h2 class="txt">Agregar apps</h2>
+        <form class="form" onsubmit="enviarDatos(event)">
+          <label class="label">Nombre de la app</label>
+          <input id="nombre" class="input" type="text">
+          <label class="label">Ruta</label>
+          <input id="ruta" class="input" type="text"> 
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+    
+ </body>
+</html>
