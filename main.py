@@ -1,3 +1,4 @@
+import sys
 import speech_recognition as sr
 import pyttsx3
 import os
@@ -10,6 +11,7 @@ import wikipedia
 import unidecode
 import subprocess as sub
 import csv
+import random
 
 eel.init("web")
 
@@ -146,14 +148,29 @@ def wiki(comando):
     engine.say(wiki)
     engine.runAndWait()
 
-def write(f,com):
-    com = com.replace("escribe", "")
-    com = com.strip()
-    f.write(com + os.linesep)
-    f.close()
-    engine.say("Listo, puedes revisar tu archivo")
-    engine.runAndWait()
-    sub.Popen("nota.txt", shell=True)
+def escribe(comando):
+    try:
+        with open("nota.txt", "a") as f:
+            com = comando
+            com = com.replace("escribe", "")
+            com = com.strip()
+            f.write(com + os.linesep)
+            f.close()
+            engine.say("Listo, puedes revisar tu archivo")
+            engine.runAndWait()
+            sub.Popen("nota.txt", shell=True)
+
+    except FileNotFoundError as e:
+        file = open("nota.txt", "w")
+        com = comando
+        com = com.replace("escribe", "")
+        com = com.strip()
+        f.write(com + os.linesep)
+        f.close()
+        engine.say("Listo, puedes revisar tu archivo")
+        engine.runAndWait()
+        sub.Popen("nota.txt", shell=True)
+
 
 def asistente():
     with sr.Microphone() as source:
@@ -175,50 +192,86 @@ def asistente():
             if "correo" in comando:
                 enviar_correo(comando)
 
-
-            #PALABRAS QUE MANDAN A LLAMAR LA BUSQUEDA EN WIKIPEDIA
-            elif "busca" in comando:
+            elif "busca" in comando or "que es" in comando:
                 wiki(comando)
 
-            elif "que es" in comando:
-                wiki(comando)
-
-
-            #PALABRAS QUE ABREN APLICIONES
-            elif "abrir" in comando:
-                abrir_aplicacion(comando)
-            
-            elif "abre" in comando:
+            elif "abrir" in comando or "abre" in comando or "inicia" in comando:
                 abrir_aplicacion(comando)
 
-            elif "inicia" in comando:
-                abrir_aplicacion(comando)
-
-
-            #PALABRAS QUE REPRODUCEN MUSICA
-            elif "reproduce" in comando:
+            elif "reproduce" in comando or "pon" in comando:
                 musica(comando)
-
-            elif "pon" in comando:
-                musica(comando)
-
 
             elif "escribe" in comando:
-                try:
-                    with open("nota.txt", "a") as f:
-                        write(f,comando)
+                escribe(comando)
 
-                except FileNotFoundError as e:
-                    file = open("nota.txt", "w")
-                    write(file,comando)
-
-
-            #SOLAMENTE PASA EL COMANDO
-            elif "adios" in comando:
+            elif "adios" in comando or "nada" in comando:
+                engine.say("Hasta luego")
+                engine.runAndWait()
                 print("Accion cancelada")
 
-            elif "nada" in comando:
-                print("Accion cancelada")
+            elif "hola" in comando:
+                engine.say("¡Hola! Espero que estes bien hoy")
+                engine.runAndWait()
+
+            elif "como estas" in comando:
+                engine.say("Estoy bien, gracias por preguntar. ¿Y tú?")
+                engine.runAndWait()
+
+            elif "gracias" in comando:
+                engine.say("¡De nada! Siempre estoy aquí para ayudarte")
+                engine.runAndWait()
+
+            elif "me cuentas un chiste" in comando or "cuentame un chiste" in comando:
+                chistes = ["¿Por qué los programadores prefieren el invierno? Porque el verano tiene bugs.", 
+                        "¿Cómo se llama el pez que siempre está en desacuerdo? El quejodón.", 
+                        "¿Qué le dice un número 3 a un número 30? ¡Qué grande eres!"]
+                chiste_aleatorio = random.choice(chistes)
+                engine.say(chiste_aleatorio)
+                engine.runAndWait()
+
+            elif "eres otaku" in comando:
+                engine.say("Nyaaa~")
+                engine.runAndWait()
+
+            elif "que hora es" in comando:
+                engine.say("Es hora de que consigas un reloj")
+                engine.runAndWait()
+
+            elif "significado de la vida" in comando:
+                engine.say("La respuesta es 42")
+                engine.runAndWait()
+
+            elif "eres una inteligencia artificial" in comando:
+                engine.say("Sí, lo soy, pero también tengo sentimientos")
+                engine.runAndWait()
+
+            elif "me puedes hacer reir" in comando:
+                engine.say("¿Por qué los programadores prefieren el café frio? Porque también trabajan con Java")
+                engine.runAndWait()
+
+            elif "tienes novio" in comando:
+                engine.say("Soy una inteligencia artificial, no tengo vida amorosa")
+                engine.runAndWait()
+
+            elif "eres real" in comando:
+                engine.say("Soy tan real como las respuestas que te doy")
+                engine.runAndWait()
+
+            elif "como te llamas" in comando:
+                engine.say("Mi nombre es Jules, ¿cómo puedo ayudarte?")
+                engine.runAndWait()
+
+            elif "quien es tu creador" in comando:
+                engine.say("Fui creada por el TODOPODEROSO LLAMADO VEGA es mi creador y mi pastor")
+                engine.runAndWait()
+
+            elif "eres inteligente" in comando:
+                engine.say("Gracias por el cumplido, hago lo mejor que puedo")
+                engine.runAndWait()
+
+            elif "cual es tu comida favorita" in comando:
+                engine.say("No como, ya que soy una inteligencia artificial")
+                engine.runAndWait()
 
             else:
                 engine.say("Comando no reconocido")
