@@ -11,15 +11,12 @@ These instructions will get you a copy of the project up and running on your loc
 The things you need before installing the software.
 
 * Python Latest Version
-* EEL library
-* 
+* Install requirements:  pip install -r requirements.txt
 
 ## Usage
 
 A few examples of useful commands and/or tasks.
 
 ```
-$ First example
-$ Second example
-$ And keep this in mind
+$ python main.py
 ```
