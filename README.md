@@ -15,8 +15,6 @@ The things you need before installing the software.
 
 ## Usage
 
-A few examples of useful commands and/or tasks.
-
 ```
 $ python main.py
 ```
